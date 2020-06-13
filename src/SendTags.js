@@ -1,5 +1,9 @@
 import React, {useState} from 'react'
 
+// TODO: Fix bug where recipients array doesn't clear after sending
+// TODO: Fix bug where adding a space in between commas for tags doesn't get trimmed out
+// TODO: Fix bug where recipients array returns duplicates for 'OR' command
+
 export default function SendTags () {
     const [recipients, updateRecipients] = useState([])
     const [tags, updateTags] = useState("")
@@ -13,19 +17,15 @@ export default function SendTags () {
         switch(event.target.name) {
             case "tags":
                 updateTags(value)
-                updateRecipients([])
                 return
             case "config":
                 updateConfig(value)
-                updateRecipients([])
                 return
             case "sendTo":
                 updateSendTo(value)
-                updateRecipients([])
                 return
             case "sendType":
                 updateSendType(value)
-                updateRecipients([])
                 return
             default:
                 return;
@@ -33,11 +33,42 @@ export default function SendTags () {
     }
 
     const filterRecipients = () => {
-        // All tags must match
-        // if (sendType.toLowerCase() === 'and') {
-        //     const sendToTags = formatTags()
-        //     const peopleObj = JSON.parse(config)
-        // }
+        updateRecipients([])
+
+        if (sendType.toLowerCase() === 'and') {
+            const formattedSendTags = sendTo.toString().split(',')
+            formattedSendTags.forEach(str => {
+                if (str.toString().includes(" ")) {
+                    str.toString().trimLeft()
+                }
+            })
+
+            const peopleObj = JSON.parse(config)
+
+            for (var key in peopleObj) {
+                peopleObj[key].sort()
+                if (peopleObj[key].length === formattedSendTags.length) {
+                    let validRecipient = true
+
+                    peopleObj[key].sort()
+                    formattedSendTags.sort()
+
+                    while (validRecipient) {
+                        for (let i = 0; i < formattedSendTags.length; i++) {
+                            if (peopleObj[key][i] !== formattedSendTags[i]) {
+                                validRecipient = false
+                            }
+                        }
+                    }
+
+                    if (validRecipient) {
+                        recipients.push(key)
+                    }
+                }
+            }
+
+            return recipients
+        }
 
         if (sendType.toLowerCase() === 'or') {
             const formattedSendTags = sendTo.toString().split(',')
@@ -64,6 +95,8 @@ export default function SendTags () {
                     }
                 }
             }
+
+            return recipients
         }
     }
 
