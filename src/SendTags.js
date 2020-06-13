@@ -28,11 +28,45 @@ export default function SendTags () {
         }
     }
 
+    // Format tags and send to input to remove left whitespace if spaces are added
+    const formatTags = () => {
+        const formattedTags = tags.toString().split(',')
+        formattedTags.forEach(str => {
+            if (str.includes(" ")) {
+                str.toString().trimLeft()
+            }
+        })
+
+        const formattedSendTags = sendTo.toString().split(',')
+        formattedSendTags.forEach(str => {
+            if (str.toString().includes(" ")) {
+                str.toString().trimLeft()
+            }
+        })
+    }
+
+    // Parse recipient input into a JSON object
+    const formatRecipients = () => {
+        const recipientObj = JSON.parse(config)
+    }
+
+    // Filter through recipient keys to find matching tags
+    const filterRecipients = () => {
+        if (sendType.toLowerCase() === 'and') {
+            formatTags()
+            formatRecipients()
+        }
+
+        if (sendType.toLowerCase() === 'or') {
+            formatTags()
+            formatRecipients()
+        }
+    }
+
     const handleSubmit = (event) => {
         event.preventDefault()
-        /*  implement me
-            hint: we will probably need to update state here to render the right parts
-        */
+        updateSent(true)
+        filterRecipients()
     }
 
     return (
