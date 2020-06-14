@@ -33,8 +33,6 @@ export default function SendTags () {
     }
 
     const filterRecipients = () => {
-        updateRecipients([])
-
         if (sendType.toLowerCase() === 'and') {
             const formattedSendTags = sendTo.toString().split(',')
             formattedSendTags.forEach(str => {
@@ -48,26 +46,14 @@ export default function SendTags () {
             for (var key in peopleObj) {
                 peopleObj[key].sort()
                 if (peopleObj[key].length === formattedSendTags.length) {
-                    let validRecipient = true
-
                     peopleObj[key].sort()
                     formattedSendTags.sort()
 
-                    while (validRecipient) {
-                        for (let i = 0; i < formattedSendTags.length; i++) {
-                            if (peopleObj[key][i] !== formattedSendTags[i]) {
-                                validRecipient = false
-                            }
-                        }
-                    }
-
-                    if (validRecipient) {
+                    if (JSON.stringify(peopleObj[key]) === JSON.stringify(formattedSendTags)) {
                         recipients.push(key)
                     }
                 }
             }
-
-            return recipients
         }
 
         if (sendType.toLowerCase() === 'or') {
@@ -95,9 +81,13 @@ export default function SendTags () {
                     }
                 }
             }
-
-            return recipients
         }
+    }
+
+    const formatMessage = (recipients) => {
+        const uniqueKeys = new Set(recipients)
+        const uniqueKeysArr = [...uniqueKeys]
+        return uniqueKeysArr.join(', ')
     }
 
     const handleSubmit = (event) => {
@@ -131,7 +121,7 @@ export default function SendTags () {
                 </label>
                 <input type="submit" value="Send Messages" />
             </form>
-            { sent && <div>Sent to: {recipients.join()}</div> }
+            { sent && <div>Sent to: {formatMessage(recipients)}</div> }
         </div>
     )
 }
