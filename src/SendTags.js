@@ -10,6 +10,9 @@ export default function SendTags () {
     const [sendTo, updateSendTo] = useState("")
     const [sendType, updateSendType] = useState("")
     const [sent, updateSent] = useState(false)
+    const [sendToErr, updateSendToErr] = useState(false)
+    const [peopleErr, updatePeopleErr] = useState(false)
+    const [andOrErr, updateAndOrErr] = useState(false)
 
     const handleChange = (event) => {
         updateRecipients([])
@@ -95,6 +98,18 @@ export default function SendTags () {
 
     const handleSubmit = (event) => {
         event.preventDefault()
+        if (sendTo === '') {
+            updateSendToErr(true)
+        }
+
+        if (config === '') {
+            updatePeopleErr(true)
+        }
+
+        if (sendType === '') {
+            updateAndOrErr(true)
+        }
+
         filterRecipients()
         updateSent(true)
     }
@@ -107,10 +122,12 @@ export default function SendTags () {
                         <div className='inputBox'>
                             <span className='label'>TAGS</span>
                             <input type="text" name="tags" placeholder='Comma-separated (i.e. first,second,third)' className='inputField' onChange={handleChange}/>
+                            { peopleErr ? <p className='errors'></p> : null }
                         </div>
                         <div className='inputBox'>
                             <span className='label'>SEND TO</span>
                             <input type="text" name="sendTo" placeholder='Tags to receive note (i.e. first,second)' className='inputField' onChange={handleChange}/>
+                            { sendToErr ? <p className='errors'>Send to tags are required</p> : null }
                         </div>
                     </div>
                     <div className='twoColumns'>
@@ -119,10 +136,12 @@ export default function SendTags () {
                                 dangerouslySetInnerHTML={{__html: 'PEOPLE CONFIGS'}}>
                             </span>
                             <input type="text" name="config" placeholder='{“Spiderman”: [“hero”,“tough”,“smart”,“tall”]}' className='inputField' onChange={handleChange}/>
+                            { peopleErr ? <p className='errors'>People config is required</p> : null }
                         </div>
                         <div className='inputBox'>
                             <span className='label'>AND/OR</span>
                             <input type="text" name="sendType" placeholder='AND to match all tags / OR to match one tag' className='inputField' onChange={handleChange}/>
+                            { andOrErr ? <p className='errors'>Please enter 'AND' / 'OR'</p> : null }
                         </div>
                     </div>
                 </label>
@@ -130,7 +149,7 @@ export default function SendTags () {
                     <input type="submit" value="Send Messages" id="sendBtn" />
                 </div>
             </form>
-            { recipients.length > 0 ? <div>Sent to: {formatMessage(recipients)}</div> : null }
+            { recipients.length > 0 ? <div id='sentMessage'>Sent note to {formatMessage(recipients)}</div> : null }
         </div>
     )
 }
