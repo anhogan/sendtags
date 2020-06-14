@@ -1,8 +1,7 @@
 import React, {useState} from 'react'
+import './SendTags.css';
 
-// TODO: Fix bug where recipients array doesn't clear after sending
 // TODO: Fix bug where adding a space in between commas for tags doesn't get trimmed out
-// TODO: Fix bug where recipients array returns duplicates for 'OR' command
 
 export default function SendTags () {
     const [recipients, updateRecipients] = useState([])
@@ -13,6 +12,7 @@ export default function SendTags () {
     const [sent, updateSent] = useState(false)
 
     const handleChange = (event) => {
+        updateRecipients([])
         const value = event.target.value
         switch(event.target.name) {
             case "tags":
@@ -51,6 +51,7 @@ export default function SendTags () {
 
                     if (JSON.stringify(peopleObj[key]) === JSON.stringify(formattedSendTags)) {
                         recipients.push(key)
+                        updateRecipients([...recipients, key])
                     }
                 }
             }
@@ -72,11 +73,13 @@ export default function SendTags () {
                         peopleObj[key].forEach(attr => {
                             if (attr === formattedSendTags[tag]) {
                                 recipients.push(key)
+                                updateRecipients([...recipients, key])
                             }
                         })
                     } else {
                         if (peopleObj[key] === formattedSendTags[tag]) {
                             recipients.push(key)
+                            updateRecipients([...recipients, key])
                         }
                     }
                 }
@@ -97,31 +100,37 @@ export default function SendTags () {
     }
 
     return (
-        <div>
+        <div id='container'>
             <form onSubmit={handleSubmit} style={{textAlign: "left"}}>
-                <label style={{paddingRight: "10px"}}>
-                    <div>
-                        <span style={{paddingRight: "10px"}}>Tags (separated by commas):</span>
-                        <input type="text" name="tags" onChange={handleChange}/>
+                <label id="columnContainer">
+                    <div className='twoColumns'>
+                        <div className='inputBox'>
+                            <span className='label'>TAGS</span>
+                            <input type="text" name="tags" placeholder='Comma-separated (i.e. first,second,third)' className='inputField' onChange={handleChange}/>
+                        </div>
+                        <div className='inputBox'>
+                            <span className='label'>SEND TO</span>
+                            <input type="text" name="sendTo" placeholder='Tags to receive note (i.e. first,second)' className='inputField' onChange={handleChange}/>
+                        </div>
                     </div>
-                    <div>
-                        <span style={{paddingRight: "10px", paddingTop: "20px"}} 
-                              dangerouslySetInnerHTML={{__html: 'People Configs (e.g. {“Spiderman”: [“hero”, “tough”, “smart”, “tall”]}): '}}>
-                        </span>
-                        <input type="text" name="config" style={{width: '500px'}} onChange={handleChange}/>
-                    </div>
-                    <div>
-                        <span style={{paddingRight: "10px", paddingTop: "20px"}}>Send To:</span>
-                        <input type="text" name="sendTo" onChange={handleChange}/>
-                    </div>
-                    <div>
-                        <span style={{paddingRight: "10px", paddingTop: "20px"}}>AND/OR?: </span>
-                        <input type="text" name="sendType" onChange={handleChange}/>
+                    <div className='twoColumns'>
+                        <div className='inputBox'>
+                            <span className='label' 
+                                dangerouslySetInnerHTML={{__html: 'PEOPLE CONFIGS'}}>
+                            </span>
+                            <input type="text" name="config" placeholder='{“Spiderman”: [“hero”,“tough”,“smart”,“tall”]}' className='inputField' onChange={handleChange}/>
+                        </div>
+                        <div className='inputBox'>
+                            <span className='label'>AND/OR</span>
+                            <input type="text" name="sendType" placeholder='AND to match all tags / OR to match one tag' className='inputField' onChange={handleChange}/>
+                        </div>
                     </div>
                 </label>
-                <input type="submit" value="Send Messages" />
+                <div id="sendBtnDiv">
+                    <input type="submit" value="Send Messages" id="sendBtn" />
+                </div>
             </form>
-            { sent && <div>Sent to: {formatMessage(recipients)}</div> }
+            { recipients.length > 0 ? <div>Sent to: {formatMessage(recipients)}</div> : null }
         </div>
     )
 }

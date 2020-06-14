@@ -1,0 +1,57 @@
+#container {
+  width: 100%;
+}
+
+#columnContainer {
+  display: flex;
+}
+
+.twoColumns {
+  width: 50%;
+}
+
+.inputBox {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 2% auto;
+}
+
+.label {
+  font-size: 1.2rem;
+  margin: 2% auto;
+}
+
+.inputField {
+  width: 55%;
+  margin: 0 auto;
+  height: 5vh;
+  border: none;
+  border-radius: 5px;
+  padding-left: 2%;
+}
+
+.inputField:focus {
+  outline: none;
+}
+
+#sendBtnDiv {
+  margin-top: 2%;
+  display: flex;
+  justify-content: center;
+}
+
+#sendBtn {
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  padding: .5% 1%;
+  margin: 2% 0;
+}
+
+#sendBtn:hover {
+  cursor: pointer;
+  background: darkgrey;
+  color: white;
+}
