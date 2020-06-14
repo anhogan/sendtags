@@ -1,15 +1,12 @@
 import React, {useState} from 'react'
 import './SendTags.css';
 
-// TODO: Fix bug where adding a space in between commas for tags doesn't get trimmed out
-
 export default function SendTags () {
     const [recipients, updateRecipients] = useState([])
     const [tags, updateTags] = useState("")
     const [config, updateConfig] = useState("")
     const [sendTo, updateSendTo] = useState("")
     const [sendType, updateSendType] = useState("")
-    const [sent, updateSent] = useState(false)
     const [sendToErr, updateSendToErr] = useState(false)
     const [peopleErr, updatePeopleErr] = useState(false)
     const [andOrErr, updateAndOrErr] = useState(false)
@@ -111,7 +108,6 @@ export default function SendTags () {
         }
 
         filterRecipients()
-        updateSent(true)
     }
 
     return (
